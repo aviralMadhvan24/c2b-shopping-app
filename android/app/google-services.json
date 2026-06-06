@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "847222172281",
+    "project_id": "c2b-shopping-app",
+    "storage_bucket": "c2b-shopping-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:847222172281:android:02bc83a86f1babdcbf82a8",
+        "android_client_info": {
+          "package_name": "com.example.fashion_store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "847222172281-ctqogfeengmpvtp04d4065pb927qbfs3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA-lxHC_my64jRjAGRwpp9FyAE7Gt_evg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "847222172281-ctqogfeengmpvtp04d4065pb927qbfs3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
