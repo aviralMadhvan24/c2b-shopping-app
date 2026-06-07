@@ -21,6 +21,23 @@ class Product {
     this.variants = const [],
   });
 
+  factory Product.fromMap(Map<String, dynamic> map, String id) {
+    return Product(
+      id: id,
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
+      price: (map['price'] ?? 0).toDouble(),
+      currencyCode: map['currencyCode'] ?? 'USD',
+      category: map['category'] ?? '',
+      rating: (map['rating'] ?? 0).toDouble(),
+      description: map['description'] ?? '',
+      variants: (map['variants'] as List<dynamic>?)
+              ?.map((v) => ProductVariant.fromMap(v as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+  }
+
   bool get hasVariants => variants.isNotEmpty;
 
   ProductVariant? get defaultVariant {
@@ -53,4 +70,16 @@ class ProductVariant {
     this.quantityAvailable,
     this.selectedOptions = const {},
   });
+
+  factory ProductVariant.fromMap(Map<String, dynamic> map) {
+    return ProductVariant(
+      id: map['id'] ?? '',
+      title: map['title'] ?? '',
+      price: (map['price'] ?? 0).toDouble(),
+      currencyCode: map['currencyCode'] ?? 'USD',
+      availableForSale: map['availableForSale'] ?? true,
+      quantityAvailable: map['quantityAvailable'],
+      selectedOptions: Map<String, String>.from(map['selectedOptions'] ?? {}),
+    );
+  }
 }

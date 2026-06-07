@@ -6,6 +6,7 @@ import '../widgets/bottom_navbar.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/product_card.dart';
 import 'category_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.repositories});
@@ -297,30 +298,46 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildProfile() {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      children: const [
-        _SectionHeader(title: 'Profile'),
-        SizedBox(height: 12),
-        _AccountBanner(),
-        SizedBox(height: 16),
+      children: [
+        const _SectionHeader(title: 'Profile'),
+        const SizedBox(height: 12),
+        _AccountBanner(user: widget.repositories.authRepository.currentUser),
+        const SizedBox(height: 16),
         _ProfileAction(
           icon: Icons.person_outline,
-          title: 'Sign in',
-          subtitle: 'Email/password and Google sign-in will be enabled.',
+          title: 'Account Details',
+          subtitle: widget.repositories.authRepository.currentUser?.email ?? 'Not signed in',
         ),
-        _ProfileAction(
+        const _ProfileAction(
           icon: Icons.location_on_outlined,
           title: 'Saved addresses',
           subtitle: 'Available for logged-in users.',
         ),
-        _ProfileAction(
+        const _ProfileAction(
           icon: Icons.receipt_long_outlined,
           title: 'Order history',
           subtitle: 'Synced after Shopify checkout integration.',
         ),
-        _ProfileAction(
+        const _ProfileAction(
           icon: Icons.notifications_none,
           title: 'Notifications',
           subtitle: 'Order updates and promotions via Firebase Messaging.',
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () async {
+              await widget.repositories.authRepository.signOut();
+            },
+            icon: const Icon(Icons.logout, color: Color(0xFFE25563)),
+            label: const Text('Logout', style: TextStyle(color: Color(0xFFE25563))),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Color(0xFFE25563)),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+          ),
         ),
       ],
     );
@@ -733,7 +750,9 @@ class _CheckoutSummary extends StatelessWidget {
 }
 
 class _AccountBanner extends StatelessWidget {
-  const _AccountBanner();
+  const _AccountBanner({this.user});
+
+  final User? user;
 
   @override
   Widget build(BuildContext context) {
@@ -744,7 +763,7 @@ class _AccountBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.white10),
       ),
-      child: const Row(
+      child: Row(
         children: [
           CircleAvatar(
             backgroundColor: Color(0xFF2E6F5E),

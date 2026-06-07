@@ -7,6 +7,9 @@ import 'theme/app_theme.dart';
 import 'config/production_settings.dart';
 import 'repositories/app_repositories.dart';
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'data/product_seeder.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +18,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Seed demo products if the database is empty
+  await ProductSeeder.seedProducts();
+
   debugPrint('=================================');
   debugPrint('Firebase Connected Successfully');
   debugPrint(
@@ -22,14 +28,14 @@ Future<void> main() async {
   );
   debugPrint('=================================');
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({
+  MyApp({
     super.key,
-    this.repositories = const AppRepositories(),
-  });
+    AppRepositories? repositories,
+  }) : repositories = repositories ?? AppRepositories();
 
   final AppRepositories repositories;
 
@@ -45,8 +51,21 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: HomeScreen(
-        repositories: repositories,
+      home: StreamBuilder<User?>(
+        stream: repositories.authRepository.authStateChanges,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (snapshot.hasData) {
+            return HomeScreen(repositories: repositories);
+          }
+
+          return LoginScreen(repositories: repositories);
+        },
       ),
     );
   }
