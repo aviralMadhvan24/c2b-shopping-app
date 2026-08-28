@@ -25,6 +25,7 @@ class Address {
 
   Map<String, Object?> toMap() {
     return {
+      'id': id,
       'name': name,
       'phone': phone,
       'line1': line1,
@@ -49,6 +50,29 @@ class Address {
       postalCode: map['postalCode'] as String,
       country: map['country'] as String,
       isDefault: map['isDefault'] as bool? ?? false,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Address &&
+        other.id == id &&
+        other.name == name &&
+        other.phone == phone &&
+        other.line1 == line1 &&
+        other.line2 == line2 &&
+        other.city == city &&
+        other.state == state &&
+        other.postalCode == postalCode &&
+        other.country == country &&
+        other.isDefault == isDefault;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      id, name, phone, line1, line2, city, state, postalCode, country, isDefault,
     );
   }
 }

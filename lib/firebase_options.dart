@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAA-lxHC_my64jRjAGRwpp9FyAE7Gt_evg',
-    appId: '1:847222172281:android:02bc83a86f1babdcbf82a8',
+    appId: '1:847222172281:android:dc5cdaaab3f8ee20bf82a8',
     messagingSenderId: '847222172281',
     projectId: 'c2b-shopping-app',
     storageBucket: 'c2b-shopping-app.firebasestorage.app',
@@ -60,22 +60,22 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAgaqL4GsiNQ-N0uzx3JrDdgCIlcIf2NHo',
-    appId: '1:847222172281:ios:565823ba09455becbf82a8',
+    appId: '1:847222172281:ios:c448e0444ff93678bf82a8',
     messagingSenderId: '847222172281',
     projectId: 'c2b-shopping-app',
     storageBucket: 'c2b-shopping-app.firebasestorage.app',
-    iosClientId: '847222172281-tjqvb4i2gsci7vikkmiihv3cok7vqpdb.apps.googleusercontent.com',
-    iosBundleId: 'com.example.fashionStore',
+    iosClientId: '847222172281-552927da9mqvbukeectebhpb7sj9edp7.apps.googleusercontent.com',
+    iosBundleId: 'com.niyatimart.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAgaqL4GsiNQ-N0uzx3JrDdgCIlcIf2NHo',
-    appId: '1:847222172281:ios:565823ba09455becbf82a8',
+    appId: '1:847222172281:ios:c448e0444ff93678bf82a8',
     messagingSenderId: '847222172281',
     projectId: 'c2b-shopping-app',
     storageBucket: 'c2b-shopping-app.firebasestorage.app',
-    iosClientId: '847222172281-tjqvb4i2gsci7vikkmiihv3cok7vqpdb.apps.googleusercontent.com',
-    iosBundleId: 'com.example.fashionStore',
+    iosClientId: '847222172281-552927da9mqvbukeectebhpb7sj9edp7.apps.googleusercontent.com',
+    iosBundleId: 'com.niyatimart.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

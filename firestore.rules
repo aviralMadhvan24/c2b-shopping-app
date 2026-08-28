@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // A store admin is a signed-in user with an active record in `admins`.
+    // This is what the admin console (admin_app/) runs as. Membership is
+    // granted by creating the document in the Firebase console — never from a
+    // client, which is why `admins` is read-only below.
+    function isAdmin() {
+      return isSignedIn() &&
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+
+    // Admin roster. An admin may read their own record so the console can
+    // check its access and show who is signed in. Nobody writes it from a
+    // client: granting yourself admin would otherwise be one request away.
+    match /admins/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // Catalog: readable by everyone (guests browse without signing in),
+    // writable only by store admins through the console.
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Catalog sections — the categories shoppers browse. Same shape as the
+    // catalog: public to read, admin-only to change.
+    match /sections/{sectionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Catalog metadata (seeded catalog version).
+    match /meta/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /users/{userId} {
+      // The owner reads their own profile; admins read any profile, because
+      // the console's customer list is built from this collection. Writes stay
+      // with the owner — the console never edits a shopper's account.
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) &&
+                      request.resource.data.uid == request.auth.uid &&
+                      request.resource.data.name is string && request.resource.data.name.size() > 0 &&
+                      request.resource.data.email is string && request.resource.data.email.size() > 0;
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+
+      match /wishlist/{productId} {
+        allow read, create, update, delete: if isOwner(userId);
+      }
+
+      match /cart/{productId} {
+        allow read, create, update, delete: if isOwner(userId);
+      }
+
+      match /addresses/{addressId} {
+        allow read, create, update, delete: if isOwner(userId);
+      }
+    }
+
+    // Orders: a signed-in user may create orders for themselves and read
+    // their own; admins read every order to run the store. Fulfilment status
+    // transitions belong to an admin, and orders are never deleted from a
+    // client so history stays intact.
+    match /orders/{orderId} {
+      allow read: if isAdmin() ||
+                     (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      allow create: if isSignedIn() &&
+                      request.resource.data.userId == request.auth.uid &&
+                      request.resource.data.total is number &&
+                      request.resource.data.total >= 0 &&
+                      request.resource.data.status == 'placed';
+
+      // An admin drives the order through the pipeline; a customer may only
+      // cancel an order of their own that has not shipped yet, and may never
+      // change what it cost.
+      allow update: if isAdmin() ||
+                     (isSignedIn() &&
+                      resource.data.userId == request.auth.uid &&
+                      request.resource.data.userId == resource.data.userId &&
+                      request.resource.data.total == resource.data.total &&
+                      request.resource.data.status == 'cancelled' &&
+                      resource.data.status in ['placed', 'confirmed']);
+
+      allow delete: if false;
+    }
+
+    // Everything not matched above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

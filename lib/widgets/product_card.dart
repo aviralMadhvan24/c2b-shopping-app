@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/product_model.dart';
+import '../providers/cart_provider.dart';
 import '../screens/product_detail_screen.dart';
+import '../theme/app_theme.dart';
+import '../utils/currency_formatter.dart';
+import 'product_image.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends ConsumerWidget {
   final Product product;
   final bool isWishlisted;
-  final bool isInCart;
   final VoidCallback? onFavoriteTap;
-  final VoidCallback? onAddToCartTap;
 
   const ProductCard({
     super.key,
     required this.product,
     this.isWishlisted = false,
-    this.isInCart = false,
     this.onFavoriteTap,
-    this.onAddToCartTap,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cartState = ref.watch(cartProvider);
+    
+    // Find cart item for this product
+    final cartItem = cartState.items.values
+        .where((item) => item.productId == product.id)
+        .firstOrNull;
+    final isInCart = cartItem != null;
+    final quantity = cartItem?.quantity ?? 0;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -30,110 +40,71 @@ class ProductCard extends StatelessWidget {
               isWishlisted: isWishlisted,
               isInCart: isInCart,
               onToggleWishlist: onFavoriteTap,
-              onAddToCart: onAddToCartTap,
             ),
           ),
         );
       },
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1F1F1F),
-              Color(0xFF111111),
-            ],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.45),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
-          border: Border.all(
-            color: Colors.white10,
-          ),
+          borderRadius: BorderRadius.circular(12),
+          color: AppColors.card,
+          border: Border.all(color: AppColors.border, width: 0.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image section
             Expanded(
-              flex: 6,
+              flex: 5,
               child: Stack(
                 children: [
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(28),
+                      top: Radius.circular(12),
                     ),
-                    child: Image.network(
-                      product.image,
-                      fit: BoxFit.cover,
+                    child: ProductImage(
+                      source: product.image,
                       width: double.infinity,
                       height: double.infinity,
                     ),
                   ),
-
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(28),
-                      ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black54,
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  Positioned(
-                    top: 10,
-                    left: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD4AF37),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        "TRENDING",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                  // Discount badge
+                  if (product.hasDiscount)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.success,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          '${product.discountPercent}% OFF',
+                          style: const TextStyle(
+                            color: AppColors.onPrimary,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-
+                  // Wishlist button
                   Positioned(
                     top: 8,
                     right: 8,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: IconButton(
-                        constraints: const BoxConstraints(),
-                        padding: const EdgeInsets.all(8),
-                        onPressed: onFavoriteTap,
-                        icon: Icon(
-                          isWishlisted
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: isWishlisted
-                              ? Colors.redAccent
-                              : Colors.white,
+                    child: GestureDetector(
+                      onTap: onFavoriteTap,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface.withValues(alpha: 0.8),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isWishlisted ? Icons.favorite : Icons.favorite_border,
+                          color: isWishlisted ? Colors.redAccent : AppColors.textDark,
+                          size: 18,
                         ),
                       ),
                     ),
@@ -141,91 +112,57 @@ class ProductCard extends StatelessWidget {
                 ],
               ),
             ),
-
+            // Info section
             Expanded(
-              flex: 4,
+              flex: 5,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      product.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                    // Flexible so the title gives up its second line in tight
+                    // grid cells instead of overflowing the card.
+                    Flexible(
+                      child: Text(
+                        product.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.textDark,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                        ),
                       ),
                     ),
-
                     const SizedBox(height: 4),
-
+                    // Sale price
                     Text(
-                      product.category,
+                      CurrencyFormatter.formatINR(product.price),
                       style: const TextStyle(
-                        color: Colors.white54,
-                        fontSize: 12,
+                        color: AppColors.textDark,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
                       ),
                     ),
-
-                    const Spacer(),
-
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.star_rounded,
-                          color: Colors.amber,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          product.rating.toString(),
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "\$${product.price}",
+                    // MRP and discount row
+                    if (product.hasDiscount)
+                      Row(
+                        children: [
+                          Text(
+                            CurrencyFormatter.formatINR(product.mrp!),
                             style: const TextStyle(
-                              color: Color(0xFFD4AF37),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              color: AppColors.textLight,
+                              fontSize: 11,
+                              decoration: TextDecoration.lineThrough,
+                              decorationColor: AppColors.textLight,
                             ),
                           ),
-                        ),
-
-                        GestureDetector(
-                          onTap: onAddToCartTap,
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: isInCart
-                                  ? Colors.green
-                                  : const Color(0xFFD4AF37),
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Icon(
-                              isInCart
-                                  ? Icons.check
-                                  : Icons.add_shopping_cart,
-                              color: Colors.black,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    const Spacer(),
+                    // Add to Cart button or Quantity selector
+                    _buildCartButton(context, ref, isInCart, quantity),
                   ],
                 ),
               ),
@@ -234,5 +171,102 @@ class ProductCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildCartButton(BuildContext context, WidgetRef ref, bool isInCart, int quantity) {
+    if (isInCart) {
+      // Show quantity selector (- qty +)
+      return Container(
+        height: 32,
+        decoration: BoxDecoration(
+          color: AppColors.gold,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Decrement button
+            GestureDetector(
+              onTap: () {
+                final itemKey = '${product.id}_${product.id}';
+                ref.read(cartProvider.notifier).decrementQuantity(itemKey);
+              },
+              child: Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                child: Icon(
+                  quantity <= 1 ? Icons.delete_outline : Icons.remove,
+                  color: AppColors.onPrimary,
+                  size: 18,
+                ),
+              ),
+            ),
+            // Quantity display
+            Text(
+              '$quantity',
+              style: const TextStyle(
+                color: AppColors.onPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            // Increment button
+            GestureDetector(
+              onTap: () {
+                final itemKey = '${product.id}_${product.id}';
+                ref.read(cartProvider.notifier).incrementQuantity(itemKey);
+              },
+              child: Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.add,
+                  color: AppColors.onPrimary,
+                  size: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Show Add button
+      return GestureDetector(
+        onTap: () {
+          ref.read(cartProvider.notifier).addItem(
+            productId: product.id,
+            variantId: product.id,
+            price: product.price,
+            productName: product.name,
+            productImage: product.image,
+            currencyCode: product.currencyCode,
+          );
+        },
+        child: Container(
+          height: 32,
+          decoration: BoxDecoration(
+            color: AppColors.gold,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.add, color: AppColors.onPrimary, size: 16),
+              SizedBox(width: 4),
+              Text(
+                'ADD',
+                style: TextStyle(
+                  color: AppColors.onPrimary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

@@ -1,0 +1,43 @@
+name: niyati_admin
+description: "Niyati Mart Admin — store console for products, sections, orders and customers."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase — same project as the customer app (c2b-shopping-app)
+  firebase_core: ^2.28.0
+  firebase_auth: ^4.17.9
+  cloud_firestore: ^4.16.0
+
+  # Product photos go to Cloudinary, not Firebase Storage — Storage now
+  # requires the Blaze billing plan just to provision a bucket.
+  http: ^1.2.1
+
+  # State management (matches the customer app)
+  flutter_riverpod: ^2.5.1
+
+  # UI
+  google_fonts: ^6.1.0
+  cupertino_icons: ^1.0.8
+  fl_chart: ^0.66.2
+
+  # Product photo picking + upload
+  image_picker: ^1.0.7
+
+  # Formatting
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

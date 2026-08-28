@@ -1,1 +1,29 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"c2b-shopping-app","appId":"1:847222172281:android:02bc83a86f1babdcbf82a8","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"c2b-shopping-app","configurations":{"android":"1:847222172281:android:02bc83a86f1babdcbf82a8","ios":"1:847222172281:ios:565823ba09455becbf82a8","macos":"1:847222172281:ios:565823ba09455becbf82a8","web":"1:847222172281:web:e879534a16667be4bf82a8","windows":"1:847222172281:web:8977213cb25a9da1bf82a8"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "c2b-shopping-app",
+          "appId": "1:847222172281:android:dc5cdaaab3f8ee20bf82a8",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "c2b-shopping-app",
+          "configurations": {
+            "android": "1:847222172281:android:dc5cdaaab3f8ee20bf82a8",
+            "ios": "1:847222172281:ios:c448e0444ff93678bf82a8",
+            "macos": "1:847222172281:ios:c448e0444ff93678bf82a8",
+            "web": "1:847222172281:web:e879534a16667be4bf82a8",
+            "windows": "1:847222172281:web:8977213cb25a9da1bf82a8"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

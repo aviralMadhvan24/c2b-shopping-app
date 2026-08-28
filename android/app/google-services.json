@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "847222172281-3k18k3ntio0t65vho9ig8177gl0tm522.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fashion_store",
+            "certificate_hash": "2dbcfd2562076eea24b7bebd625667ed520447b9"
+          }
+        },
+        {
           "client_id": "847222172281-ctqogfeengmpvtp04d4065pb927qbfs3.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,65 @@
             {
               "client_id": "847222172281-ctqogfeengmpvtp04d4065pb927qbfs3.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "847222172281-552927da9mqvbukeectebhpb7sj9edp7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.niyatimart.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:847222172281:android:dc5cdaaab3f8ee20bf82a8",
+        "android_client_info": {
+          "package_name": "com.niyatimart.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "847222172281-1qrg9nbahtckfhkgd2lgffh0tl4q2boo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.niyatimart.app",
+            "certificate_hash": "df70ba3aa2815a3b715a7727a64de36148a08af9"
+          }
+        },
+        {
+          "client_id": "847222172281-6hudmlntbk1b9nfmbla03non88kkdhu9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.niyatimart.app",
+            "certificate_hash": "2dbcfd2562076eea24b7bebd625667ed520447b9"
+          }
+        },
+        {
+          "client_id": "847222172281-ctqogfeengmpvtp04d4065pb927qbfs3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAA-lxHC_my64jRjAGRwpp9FyAE7Gt_evg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "847222172281-ctqogfeengmpvtp04d4065pb927qbfs3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "847222172281-552927da9mqvbukeectebhpb7sj9edp7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.niyatimart.app"
+              }
             }
           ]
         }

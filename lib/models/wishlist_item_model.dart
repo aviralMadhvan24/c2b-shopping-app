@@ -24,4 +24,18 @@ class WishlistItem {
       addedAt: DateTime.parse(map['addedAt'] as String),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is WishlistItem &&
+        other.productId == productId &&
+        other.variantId == variantId &&
+        other.addedAt == addedAt;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(productId, variantId, addedAt);
+  }
 }

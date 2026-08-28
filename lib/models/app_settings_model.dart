@@ -24,4 +24,18 @@ class AppSettings {
       supportEmail: map['supportEmail'] as String? ?? 'support@example.com',
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AppSettings &&
+        other.maintenanceMode == maintenanceMode &&
+        other.featuredCollectionId == featuredCollectionId &&
+        other.supportEmail == supportEmail;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(maintenanceMode, featuredCollectionId, supportEmail);
+  }
 }

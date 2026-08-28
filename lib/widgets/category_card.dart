@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class CategoryCard extends StatelessWidget {
   final String title;
@@ -22,16 +23,16 @@ class CategoryCard extends StatelessWidget {
             height: 75,
             width: 75,
             decoration: BoxDecoration(
-              color: Colors.white10,
+              color: AppColors.background,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Icon(icon, color: Colors.white, size: 35),
+            child: Icon(icon, color: AppColors.textDark, size: 35),
           ),
           const SizedBox(height: 10),
           Text(
             title,
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.textDark,
               fontWeight: FontWeight.w500,
             ),
           ),

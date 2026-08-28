@@ -1,31 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/product_model.dart';
+import '../providers/wishlist_provider.dart';
 import '../repositories/app_repositories.dart';
 import '../widgets/product_card.dart';
+import '../theme/app_theme.dart';
 
-class CategoryScreen extends StatelessWidget {
+class CategoryScreen extends ConsumerWidget {
   final String category;
   final AppRepositories repositories;
-  final Function(Product)? onToggleWishlist;
-  final Function(Product)? onAddToCart;
-  final bool Function(Product)? isWishlisted;
-  final bool Function(Product)? isInCart;
 
   const CategoryScreen({
     super.key,
     required this.category,
     required this.repositories,
-    this.onToggleWishlist,
-    this.onAddToCart,
-    this.isWishlisted,
-    this.isInCart,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(title: Text(category)),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: FutureBuilder<List<Product>>(
@@ -43,7 +37,7 @@ class CategoryScreen extends StatelessWidget {
               return const Center(
                 child: Text(
                   "No products available",
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(color: AppColors.textDark),
                 ),
               );
             }
@@ -54,16 +48,23 @@ class CategoryScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 15,
                 mainAxisSpacing: 15,
-                childAspectRatio: 0.67,
+                childAspectRatio: 0.58,
               ),
               itemBuilder: (context, index) {
                 final product = filteredProducts[index];
+                final wishlistState = ref.watch(wishlistProvider);
+                final isWishlisted = wishlistState.items.containsKey(product.id);
+                
                 return ProductCard(
                   product: product,
-                  isWishlisted: isWishlisted?.call(product) ?? false,
-                  isInCart: isInCart?.call(product) ?? false,
-                  onFavoriteTap: () => onToggleWishlist?.call(product),
-                  onAddToCartTap: () => onAddToCart?.call(product),
+                  isWishlisted: isWishlisted,
+                  onFavoriteTap: () {
+                    if (isWishlisted) {
+                      ref.read(wishlistProvider.notifier).removeItem(product.id);
+                    } else {
+                      ref.read(wishlistProvider.notifier).addItem(product.id);
+                    }
+                  },
                 );
               },
             );

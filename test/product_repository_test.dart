@@ -5,10 +5,10 @@ void main() {
   const repository = DemoProductRepository();
 
   test('fetches demo products', () async {
-    final products = await repository.fetchProducts();
+    final result = await repository.fetchProducts();
 
-    expect(products, isNotEmpty);
-    expect(products.every((product) => product.id.isNotEmpty), isTrue);
+    expect(result.items, isNotEmpty);
+    expect(result.items.every((product) => product.id.isNotEmpty), isTrue);
   });
 
   test('fetches products by category', () async {
@@ -22,6 +22,6 @@ void main() {
     final product = await repository.fetchProductById('demo-men-hoodie');
 
     expect(product, isNotNull);
-    expect(product!.name, 'Men Hoodie');
+    expect(product.name, 'Men Hoodie');
   });
 }

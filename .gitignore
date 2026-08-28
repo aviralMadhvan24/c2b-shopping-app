@@ -43,3 +43,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Build output from the admin console and the Android host project. The
+# root-only `/build/` above misses both.
+build/
+
+# Golden-test diff images, written on every failed run.
+test/**/failures/
+
+# Cloud Functions dependencies.
+functions/node_modules/

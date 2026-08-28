@@ -17,6 +17,7 @@ class UserProfile {
 
   Map<String, Object?> toMap() {
     return {
+      'id': id,
       'name': name,
       'email': email,
       'phone': phone,
@@ -34,5 +35,22 @@ class UserProfile {
       createdAt: DateTime.parse(map['createdAt'] as String),
       defaultAddressId: map['defaultAddressId'] as String?,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is UserProfile &&
+        other.id == id &&
+        other.name == name &&
+        other.email == email &&
+        other.phone == phone &&
+        other.createdAt == createdAt &&
+        other.defaultAddressId == defaultAddressId;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(id, name, email, phone, createdAt, defaultAddressId);
   }
 }

@@ -1,0 +1,52 @@
+rules_version = '2';
+
+// NOT IN USE, and not referenced by firebase.json.
+//
+// Firebase Storage now requires the Blaze billing plan just to provision a
+// bucket, so product and section photos go to Cloudinary instead — see
+// admin_app/lib/config/cloudinary_config.dart. Nothing in either app reads or
+// writes Storage. Kept only so the rules are ready if this store ever moves
+// onto Blaze; `firebase deploy` will not touch it while the "storage" block is
+// absent from firebase.json.
+//
+// Original intent, for whoever restores it:
+//
+// Product and section photos uploaded from the admin console (admin_app/).
+//
+// Storage rules can read Firestore, so admin membership is checked against the
+// same `admins` collection the Firestore rules use — one roster, one place to
+// revoke someone.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null &&
+             firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid)) &&
+             firestore.get(/databases/(default)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+
+    // Uploads must actually be images, and capped so a mis-picked video
+    // cannot land in the bucket. The console already downscales before
+    // uploading; this is the backstop.
+    function isValidImage() {
+      return request.resource.contentType.matches('image/.*') &&
+             request.resource.size < 10 * 1024 * 1024;
+    }
+
+    // Catalog photos are public to read — the storefront shows them to guests
+    // who have not signed in.
+    match /products/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.resource == null || isValidImage());
+    }
+
+    match /sections/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.resource == null || isValidImage());
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

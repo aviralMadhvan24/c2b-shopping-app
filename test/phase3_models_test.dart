@@ -59,8 +59,8 @@ void main() {
 
   test('wishlist item stores only product and variant references', () {
     final item = WishlistItem(
-      productId: 'gid://shopify/Product/1',
-      variantId: 'gid://shopify/ProductVariant/1',
+      productId: 'product-1',
+      variantId: 'variant-1',
       addedAt: DateTime.utc(2026, 1, 1),
     );
 

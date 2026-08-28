@@ -1,71 +1,64 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class BottomNavbar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
   final int cartCount;
-  final int wishlistCount;
 
   const BottomNavbar({
     super.key,
     required this.currentIndex,
     required this.onTap,
     this.cartCount = 0,
-    this.wishlistCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      backgroundColor: Colors.black,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.grey,
-      currentIndex: currentIndex,
-      onTap: onTap,
-      items: [
-        const BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-        BottomNavigationBarItem(
-          icon: _iconWithBadge(const Icon(Icons.favorite), wishlistCount),
-          label: "Wishlist",
-        ),
-        BottomNavigationBarItem(
-          icon: _iconWithBadge(const Icon(Icons.shopping_cart), cartCount),
-          label: "Cart",
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: "Profile",
-        ),
-      ],
-    );
-  }
-}
-
-Widget _iconWithBadge(Widget icon, int count) {
-  if (count <= 0) return icon;
-  return Stack(
-    clipBehavior: Clip.none,
-    children: [
-      icon,
-      Positioned(
-        right: -6,
-        top: -6,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(
-            color: Colors.redAccent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            '$count',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(
+          top: BorderSide(color: AppColors.border, width: 0.5),
         ),
       ),
-    ],
-  );
+      child: BottomNavigationBar(
+        backgroundColor: AppColors.surface,
+        selectedItemColor: AppColors.gold,
+        unselectedItemColor: AppColors.textLight,
+        currentIndex: currentIndex,
+        onTap: onTap,
+        type: BottomNavigationBarType.fixed,
+        selectedFontSize: 12,
+        unselectedFontSize: 11,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_view_outlined),
+            activeIcon: Icon(Icons.grid_view),
+            label: 'Categories',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search_outlined),
+            activeIcon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long_outlined),
+            activeIcon: Icon(Icons.receipt_long),
+            label: 'Orders',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Account',
+          ),
+        ],
+      ),
+    );
+  }
 }

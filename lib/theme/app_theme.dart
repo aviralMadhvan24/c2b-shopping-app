@@ -1,225 +1,239 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// NiyatiMart brand palette.
+///
+/// Roles come straight from the brand sheet:
+///   Primary Blue   - navigation, header, primary buttons
+///   Teal           - icons, highlights, category chips
+///   Orange         - offers, badges, CTA highlights
+///   Green          - success, secure, savings
+///   Light          - page background and cards
+///   Dark / Grey    - primary and secondary text
 class AppColors {
-  static const background = Color(0xFF0B0B0B);
-  static const surface = Color(0xFF141414);
-  static const card = Color(0xFF1A1A1A);
+  static const primary = Color(0xFF0D47A1);
+  static const primaryDark = Color(0xFF093670);
+  static const primaryLight = Color(0xFF1565C0);
+  static const primarySoft = Color(0xFFE8EEF9);
 
-  static const gold = Color(0xFFD4AF37);
-  static const goldLight = Color(0xFFF5D76E);
+  static const teal = Color(0xFF00897B);
+  static const tealSoft = Color(0xFFE0F2F0);
 
-  static const success = Color(0xFF22C55E);
-  static const danger = Color(0xFFEF4444);
+  static const orange = Color(0xFFFF9800);
+  static const orangeSoft = Color(0xFFFFF3E0);
 
-  static const white = Colors.white;
-  static const grey = Color(0xFF9CA3AF);
-  static const border = Color(0xFF2A2A2A);
+  static const success = Color(0xFF43A047);
+  static const successSoft = Color(0xFFE8F5E9);
+  static const danger = Color(0xFFE53935);
 
-  static const gradientStart = Color(0xFF1E1E1E);
-  static const gradientEnd = Color(0xFF111111);
+  static const background = Color(0xFFF5F7FA);
+  static const card = Color(0xFFFFFFFF);
+  static const surface = Color(0xFFFFFFFF);
+  static const border = Color(0xFFE3E8EF);
+
+  static const textDark = Color(0xFF212121);
+  static const textGrey = Color(0xFF757575);
+  static const textLight = Color(0xFF9E9E9E);
+  static const onPrimary = Color(0xFFFFFFFF);
+
+  // ---------------------------------------------------------------------
+  // Legacy aliases. The app was originally built dark-with-gold; these keep
+  // older call sites compiling and pointing at the right new role.
+  // ---------------------------------------------------------------------
+  static const gold = primary;
+  static const goldLight = primaryLight;
+  static const grey = textGrey;
+  static const white = Color(0xFFFFFFFF);
+  static const gradientStart = primary;
+  static const gradientEnd = primaryDark;
 }
 
 class AppTheme {
-  static ThemeData darkTheme = ThemeData(
-    useMaterial3: true,
+  static ThemeData get lightTheme => _build();
 
-    brightness: Brightness.dark,
+  /// Kept so existing references (and tests) resolve. The app ships a single
+  /// light theme now; this is the same [ThemeData].
+  static ThemeData get darkTheme => _build();
 
-    scaffoldBackgroundColor: AppColors.background,
-
-    colorScheme: const ColorScheme.dark(
-      primary: AppColors.gold,
-      secondary: AppColors.goldLight,
-      surface: AppColors.surface,
-    ),
-
-    textTheme: GoogleFonts.poppinsTextTheme().apply(
-      bodyColor: Colors.white,
-      displayColor: Colors.white,
-    ),
-
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      centerTitle: false,
-      foregroundColor: Colors.white,
-    ),
-
-    cardTheme: CardThemeData(
-      color: AppColors.card,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-        side: const BorderSide(
-          color: AppColors.border,
-        ),
+  static ThemeData _build() {
+    final base = ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: AppColors.background,
+      colorScheme: const ColorScheme.light(
+        primary: AppColors.primary,
+        onPrimary: AppColors.onPrimary,
+        secondary: AppColors.teal,
+        onSecondary: AppColors.onPrimary,
+        tertiary: AppColors.orange,
+        surface: AppColors.card,
+        onSurface: AppColors.textDark,
+        error: AppColors.danger,
       ),
-    ),
+    );
 
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: AppColors.card,
-
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 18,
+    return base.copyWith(
+      textTheme: GoogleFonts.poppinsTextTheme(base.textTheme).apply(
+        bodyColor: AppColors.textDark,
+        displayColor: AppColors.textDark,
       ),
 
-      hintStyle: const TextStyle(
-        color: AppColors.grey,
-      ),
-
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: BorderSide.none,
-      ),
-
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: const BorderSide(
-          color: AppColors.border,
-        ),
-      ),
-
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: const BorderSide(
-          color: AppColors.gold,
-          width: 1.5,
-        ),
-      ),
-    ),
-
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.gold,
-        foregroundColor: Colors.black,
-
-        minimumSize: const Size(
-          double.infinity,
-          56,
-        ),
-
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         elevation: 0,
+        centerTitle: false,
+        iconTheme: IconThemeData(color: AppColors.onPrimary),
+        titleTextStyle: TextStyle(
+          color: AppColors.onPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
 
+      cardTheme: CardThemeData(
+        color: AppColors.card,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.border),
         ),
+      ),
 
-        textStyle: const TextStyle(
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.card,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
+        hintStyle: const TextStyle(color: AppColors.textLight),
+        labelStyle: const TextStyle(color: AppColors.textGrey),
+        prefixIconColor: AppColors.textGrey,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.danger),
+        ),
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.onPrimary,
+
+          // Height only. An infinite minimum WIDTH here forces a tight
+          // infinite width on every ElevatedButton, which throws
+          // "BoxConstraints forces an infinite width" the moment one is placed
+          // in a Row or any other horizontally unbounded parent. Buttons that
+          // should span the screen wrap themselves in
+          // SizedBox(width: double.infinity) or Expanded at the call site.
+          minimumSize: const Size(0, 52),
+
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
+        ),
+      ),
+
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.onPrimary,
+          minimumSize: const Size(0, 52),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
+        ),
+      ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: const BorderSide(color: AppColors.border),
+          minimumSize: const Size(0, 52),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+      ),
+
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppColors.card,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textGrey,
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+      ),
+
+      chipTheme: base.chipTheme.copyWith(
+        backgroundColor: AppColors.primarySoft,
+        labelStyle: const TextStyle(color: AppColors.primary),
+        side: BorderSide.none,
+      ),
+
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.card,
+        titleTextStyle: const TextStyle(
+          color: AppColors.textDark,
+          fontSize: 20,
           fontWeight: FontWeight.w700,
-          fontSize: 16,
+        ),
+        contentTextStyle: const TextStyle(color: AppColors.textDark),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
-    ),
 
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: AppColors.surface,
-      selectedItemColor: AppColors.gold,
-      unselectedItemColor: AppColors.grey,
-      type: BottomNavigationBarType.fixed,
-      elevation: 0,
-    ),
+      snackBarTheme: const SnackBarThemeData(
+        backgroundColor: AppColors.textDark,
+        contentTextStyle: TextStyle(color: AppColors.onPrimary),
+      ),
 
-    dividerColor: AppColors.border,
-  );
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: AppColors.primary,
+      ),
 
+      dividerColor: AppColors.border,
+      iconTheme: const IconThemeData(color: AppColors.textGrey),
+    );
+  }
+
+  /// Soft elevation for cards on the light background.
   static BoxDecoration premiumCardDecoration = BoxDecoration(
-    gradient: const LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        AppColors.gradientStart,
-        AppColors.gradientEnd,
-      ],
-    ),
-    borderRadius: BorderRadius.circular(24),
-    border: Border.all(
-      color: AppColors.border,
-    ),
+    color: AppColors.card,
+    borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: AppColors.border),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withValues(alpha: 0.35),
-        blurRadius: 30,
-        spreadRadius: 2,
-        offset: const Offset(0, 10),
+        color: AppColors.primary.withValues(alpha: 0.06),
+        blurRadius: 18,
+        offset: const Offset(0, 6),
       ),
     ],
-  );
-
-  static BoxDecoration glassDecoration = BoxDecoration(
-    color: Colors.white.withValues(alpha: 0.06),
-    borderRadius: BorderRadius.circular(24),
-    border: Border.all(
-      color: Colors.white.withValues(alpha: 0.08),
-    ),
-  );
-
-  static BoxDecoration heroBannerDecoration = BoxDecoration(
-    borderRadius: BorderRadius.circular(30),
-    gradient: const LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Color(0xFF2D2D2D),
-        Color(0xFF121212),
-      ],
-    ),
-    boxShadow: [
-      BoxShadow(
-        color: AppColors.gold.withValues(alpha: 0.15),
-        blurRadius: 40,
-        spreadRadius: 2,
-      ),
-    ],
-  );
-}
-
-class AppSpacing {
-  static const xs = 4.0;
-  static const sm = 8.0;
-  static const md = 16.0;
-  static const lg = 24.0;
-  static const xl = 32.0;
-  static const xxl = 40.0;
-}
-
-class AppRadius {
-  static const sm = 12.0;
-  static const md = 18.0;
-  static const lg = 24.0;
-  static const xl = 30.0;
-}
-
-class AppTextStyles {
-  static const hero = TextStyle(
-    fontSize: 34,
-    fontWeight: FontWeight.w800,
-    color: Colors.white,
-    height: 1.1,
-  );
-
-  static const sectionTitle = TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.w800,
-    color: Colors.white,
-  );
-
-  static const productTitle = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w700,
-    color: Colors.white,
-  );
-
-  static const subtitle = TextStyle(
-    fontSize: 14,
-    color: AppColors.grey,
-  );
-
-  static const price = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w800,
-    color: AppColors.gold,
   );
 }

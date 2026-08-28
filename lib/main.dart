@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'firebase_options.dart';
 import 'theme/app_theme.dart';
 import 'config/production_settings.dart';
 import 'repositories/app_repositories.dart';
-import 'screens/home_screen.dart';
-import 'screens/login_screen.dart';
-import 'data/product_seeder.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'providers/pagination_provider.dart';
+import 'widgets/auth_gate.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +17,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Seed demo products if the database is empty
-  await ProductSeeder.seedProducts();
-
   debugPrint('=================================');
   debugPrint('Firebase Connected Successfully');
   debugPrint(
@@ -28,19 +24,33 @@ Future<void> main() async {
   );
   debugPrint('=================================');
 
-  runApp(MyApp());
+  // Construct the repositories once for the whole app. Rebuilding them per
+  // widget build would re-initialise GoogleSignIn on every frame.
+  final repositories = AppRepositories();
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        productRepositoryProvider.overrideWithValue(
+          repositories.productRepository,
+        ),
+      ],
+      child: MyApp(repositories: repositories),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({
+  const MyApp({
     super.key,
-    AppRepositories? repositories,
-  }) : repositories = repositories ?? AppRepositories();
+    this.repositories,
+  });
 
-  final AppRepositories repositories;
+  final AppRepositories? repositories;
 
   @override
   Widget build(BuildContext context) {
+    final repos = repositories ?? AppRepositories();
     return MaterialApp(
       title: ProductionSettings.appTitle,
       debugShowCheckedModeBanner: false,
@@ -51,22 +61,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      home: StreamBuilder<User?>(
-        stream: repositories.authRepository.authStateChanges,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          if (snapshot.hasData) {
-            return HomeScreen(repositories: repositories);
-          }
-
-          return LoginScreen(repositories: repositories);
-        },
-      ),
+      home: AuthGate(repositories: repos),
     );
   }
 }

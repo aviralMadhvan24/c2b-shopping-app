@@ -1,11 +1,11 @@
 {
-    "name": "fashion_store",
-    "short_name": "fashion_store",
+    "name": "Niyati Mart",
+    "short_name": "Niyati Mart",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Niyati Mart - shop electronics, fashion, grocery, home, beauty and books.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
